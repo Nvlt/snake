@@ -4,7 +4,7 @@ export default class scene
 {
     constructor()
     {
-        
+        this.updateQueue = [];
         document.body.addEventListener('keydown',(e)=>{
             //console.log(e.key);
             this.lastActionTime = Date.now();
@@ -50,6 +50,7 @@ export default class scene
         this.gridSize = 40;
         this.vect2D_grid = [];
         this.generateGrid();
+        this.generateBoard();
         this.velocity = {x:0,y:0};
         this.object = {x:0,y:0};
         this.temporarySquare();
@@ -80,7 +81,7 @@ export default class scene
             
             this.checkUserActivity();
             this.render();
-        },5)
+        },33)
         this.randomGoal()
         this.lastActionTime = Date.now();
         this.bloopEffect = this.addBloopEffect();
@@ -105,36 +106,53 @@ export default class scene
         this.vect2D_grid = grid;
         
     }
-    render()
+    generateBoard()
     {
         let html = `<div class='grid_container' style='display: flex;
-        flex-direction: column;'><h1>Score: ${this.score} || Status: ${this.status}</h1>`;
+        flex-direction: column;'><h1 id='status_text'>Score: ${this.score} || Status: ${this.status}</h1>`;
         for(const y in this.vect2D_grid)
         {
             html += `<div class='row' style='display: flex;
             flex-direction: row;'>`;
             for(const x in this.vect2D_grid[y])
-            {
-               
-                const x_dif = Math.abs(x - -this.object.x);
-                const y_dif = Math.abs(y - -this.object.y);
-                const multi = 255/this.gridSize;
-                let colors = `${x_dif*multi},0,${y_dif*multi}`
-                if(this.vect2D_grid[y][x] == 2)
-                {
-                    colors = `60,0,50`;
-                }
-                if(this.vect2D_grid[y][x] == 1)
-                {
-                    colors = `100,0,90`;
-                }
-                html+=`<div style='background-color:rgb(${colors}); width: 15px;
+            {   
+                html+=`<div id='_${x}_${y}_' style='background-color:rgb(100,0,100); width: 15px;
                 height: 15px;'></div>`
             }
             html += `</div>`;
         }
         html += `</div>`;
         document.body.innerHTML = html;
+    }
+    render()
+    {
+        for(const update of this.updateQueue)
+        {
+            
+            if(update.type == 'grid' && update.value == 1)
+            {
+                document.getElementById(update.id).style.backgroundColor = 'rgb(0,0,0)';
+            }
+            if(update.type == 'grid' && update.value == 0)
+            {
+                document.getElementById(update.id).style.backgroundColor = 'rgb(100,0,100)';
+            }
+            if(update.type == 'grid' && update.value == 2)
+            {
+                document.getElementById(update.id).style.backgroundColor = 'rgb(0,0,0)';
+            }
+            if(update.type == 'status')
+            {
+                document.getElementById('status_text').innerHTML = `Score: ${this.score} || Status: ${this.status}`;
+            }
+            
+        }
+        this.updateQueue = [];
+    }
+    setValue(x,y,value)
+    {
+        this.vect2D_grid[y][x] = value;
+        this.updateQueue.push({id:`_${x}_${y}_`,value:value,type:'grid'});
     }
     collisionCheck()
     {
@@ -156,11 +174,14 @@ export default class scene
             this.vect2D_grid[this.object.y][this.object.x] = 0;
             this.score=0;
             this.status="Oh no.."
+            this.updateQueue.push({id:`status_text`,value:this.score,type:'status'})
             this.failEffect.play();
             this.generateGrid();
+            this.generateBoard();
             this.randomGoal();
             this.object = {x:0,y:0};
             this.temporarySquare();
+            this.theme.play();
             //console.log('test')
             return 1;
         }
@@ -169,7 +190,7 @@ export default class scene
     }
     addBloopEffect()
     {
-        document.body.innerHTML += `<audio id="bloopEffect" controls>
+        document.body.innerHTML += `<audio id="bloopEffect" hidden controls>
                     <source src="./sounds/bloop.wav" type="audio/mpeg">
                     Your browser does not support the audio element.
                     </audio>`;
@@ -178,7 +199,7 @@ export default class scene
     }
     addFailEffect()
     {
-        document.body.innerHTML += `<audio id="failEffect" controls>
+        document.body.innerHTML += `<audio id="failEffect" hidden controls>
                     <source src="./sounds/Fail.wav" type="audio/mpeg">
                     Your browser does not support the audio element.
                     </audio>`;
@@ -187,7 +208,7 @@ export default class scene
     }
     addMusic()
     {
-        document.body.innerHTML += `<audio id="theme" controls>
+        document.body.innerHTML += `<audio id="theme" hidden controls>
                     <source src="./sounds/theme.mp3" type="audio/mpeg">
                     Your browser does not support the audio element.
                 </audio>`;
@@ -214,6 +235,7 @@ export default class scene
     Score()
     {
         this.score++;
+        this.updateQueue.push({id:`status_text`,value:this.score,type:'status'})
     }
     randomGoal()
     {
@@ -223,13 +245,15 @@ export default class scene
         }
         else
         {
-            this.vect2D_grid[Math.floor(Math.random()*this.gridSize)][Math.floor(Math.random()*this.gridSize)] = 2;
+            let x = Math.floor(Math.random()*this.gridSize);
+            let y = Math.floor(Math.random()*this.gridSize);
+            this.setValue(x,y,2);
         }
     }
     temporarySquare()
     {
         let {x,y} = this.object;
-        this.vect2D_grid[y][x] = 1;
+        this.setValue(x,y,1);
         this.clearSpot(x,y);
     }
     clearSpot(x,y)
@@ -238,7 +262,7 @@ export default class scene
             
             if(!(this.object.y == y && this.object.x == x))
             {
-                this.vect2D_grid[y][x] = 0;
+                this.setValue(x,y,0);
             }
             else
             {
