@@ -79,7 +79,7 @@ export default class scene
             
             
             this.render();
-        },10)
+        },5)
         this.randomGoal()
     }
     generateGrid()
