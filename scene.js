@@ -107,16 +107,28 @@ export default class scene
     }
     render()
     {
-        let html = `<h1>Score: ${this.score} || Status: ${this.status}</h1><div class='grid_container' style='display: flex;
-        flex-direction: column;'>`;
-        for(const y of this.vect2D_grid)
+        let html = `<div class='grid_container' style='display: flex;
+        flex-direction: column;'><h1>Score: ${this.score} || Status: ${this.status}</h1>`;
+        for(const y in this.vect2D_grid)
         {
             html += `<div class='row' style='display: flex;
             flex-direction: row;'>`;
-            for(const x of y)
+            for(const x in this.vect2D_grid[y])
             {
-                const color = 100 * (x == 1) || 200* (x == 2) ||  150;
-                html+=`<div style='background-color:rgb(${color},${color},${color}); width: 15px;
+               
+                const x_dif = Math.abs(x - -this.object.x);
+                const y_dif = Math.abs(y - -this.object.y);
+                const multi = 255/this.gridSize;
+                let colors = `${x_dif*multi},0,${y_dif*multi}`
+                if(this.vect2D_grid[y][x] == 2)
+                {
+                    colors = `60,0,50`;
+                }
+                if(this.vect2D_grid[y][x] == 1)
+                {
+                    colors = `100,0,90`;
+                }
+                html+=`<div style='background-color:rgb(${colors}); width: 15px;
                 height: 15px;'></div>`
             }
             html += `</div>`;
