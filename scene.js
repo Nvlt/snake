@@ -4,6 +4,7 @@ export default class scene
 {
     constructor()
     {
+        
         this.updateQueue = [];
         document.body.addEventListener('keydown',(e)=>{
             //console.log(e.key);
@@ -47,7 +48,8 @@ export default class scene
         })
         this.score = 0;
         this.status = "Game time!"
-        this.gridSize = 40;
+        this.gridSize = 50;
+        this.squareSize = 12;
         this.vect2D_grid = [];
         this.generateGrid();
         this.generateBoard();
@@ -116,8 +118,8 @@ export default class scene
             flex-direction: row;'>`;
             for(const x in this.vect2D_grid[y])
             {   
-                html+=`<div id='_${x}_${y}_' style='background-color:rgb(100,0,100); width: 15px;
-                height: 15px;'></div>`
+                html+=`<div id='_${x}_${y}_' style='background-color:rgb(100,0,100); width: ${this.squareSize}px;
+                height: ${this.squareSize}px;'></div>`
             }
             html += `</div>`;
         }
