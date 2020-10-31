@@ -190,7 +190,7 @@ export default class scene
         //console.log(timeDif);
         if(timeDif > 500 && this.playing == true)
         {
-            this.theme.pause();
+            //Blah
             this.playing = false;
         }
         else if(timeDif < 500 && this.playing == false)
