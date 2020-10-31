@@ -7,6 +7,7 @@ export default class scene
         
         document.body.addEventListener('keydown',(e)=>{
             //console.log(e.key);
+            this.lastActionTime = Date.now();
             if(e.key === 's')
             {
                 this.velocity.y = 1;
@@ -26,7 +27,7 @@ export default class scene
             //console.log(this.velocity)
         })
         document.body.addEventListener('keyup',(e)=>{
-            //console.log(e.key);
+            this.lastActionTime = Date.now();
             if(e.key === 's')
             {
                 this.velocity.y = 0;
@@ -77,10 +78,14 @@ export default class scene
 
             }
             
-            
+            this.checkUserActivity();
             this.render();
         },5)
         this.randomGoal()
+        this.lastActionTime = Date.now();
+        this.theme = this.addMusic();
+        this.playing = false;
+        
     }
     generateGrid()
     {
@@ -127,7 +132,8 @@ export default class scene
             this.temporarySquare()
             this.randomGoal();
             this.status="Wow!"
-            console.log('test')
+            
+            
             return 1;
         }
         if(this.vect2D_grid[this.object.y][this.object.x] == 1)
@@ -144,6 +150,32 @@ export default class scene
         }
         
 
+    }
+    addMusic()
+    {
+        document.body.innerHTML += `<audio id="theme" controls>
+                    <source src="./sounds/theme.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>`;
+        let themePlayer = document.getElementById('theme');
+        themePlayer.loop = true;
+        return themePlayer;
+        
+    }
+    checkUserActivity()
+    {
+        let timeDif = Date.now() - this.lastActionTime;
+        //console.log(timeDif);
+        if(timeDif > 500 && this.playing == true)
+        {
+            this.theme.pause();
+            this.playing = false;
+        }
+        else if(timeDif < 500 && this.playing == false)
+        {
+            this.theme.play();
+            this.playing = true;
+        }
     }
     Score()
     {
