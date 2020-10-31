@@ -83,6 +83,8 @@ export default class scene
         },5)
         this.randomGoal()
         this.lastActionTime = Date.now();
+        this.bloopEffect = this.addBloopEffect();
+        this.failEffect = this.addFailEffect();
         this.theme = this.addMusic();
         this.playing = false;
         
@@ -132,6 +134,7 @@ export default class scene
             this.temporarySquare()
             this.randomGoal();
             this.status="Wow!"
+            this.bloopEffect.play();
             
             
             return 1;
@@ -141,6 +144,7 @@ export default class scene
             this.vect2D_grid[this.object.y][this.object.x] = 0;
             this.score=0;
             this.status="Oh no.."
+            this.failEffect.play();
             this.generateGrid();
             this.randomGoal();
             this.object = {x:0,y:0};
@@ -150,6 +154,24 @@ export default class scene
         }
         
 
+    }
+    addBloopEffect()
+    {
+        document.body.innerHTML += `<audio id="bloopEffect" controls>
+                    <source src="./sounds/bloop.wav" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                    </audio>`;
+        let effectPlayer = document.getElementById('bloopEffect');
+        return effectPlayer;
+    }
+    addFailEffect()
+    {
+        document.body.innerHTML += `<audio id="failEffect" controls>
+                    <source src="./sounds/Fail.wav" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                    </audio>`;
+        let effectPlayer = document.getElementById('failEffect');
+        return effectPlayer;
     }
     addMusic()
     {
@@ -183,7 +205,14 @@ export default class scene
     }
     randomGoal()
     {
-        this.vect2D_grid[Math.floor(Math.random()*this.gridSize)][Math.floor(Math.random()*this.gridSize)] = 2;
+        if(this.vect2D_grid[Math.floor(Math.random()*this.gridSize)][Math.floor(Math.random()*this.gridSize)] == 1)
+        {
+            this.randomGoal();
+        }
+        else
+        {
+            this.vect2D_grid[Math.floor(Math.random()*this.gridSize)][Math.floor(Math.random()*this.gridSize)] = 2;
+        }
     }
     temporarySquare()
     {
