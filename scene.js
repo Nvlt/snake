@@ -9,19 +9,19 @@ export default class scene
         document.body.addEventListener('keydown',(e)=>{
             //console.log(e.key);
             this.lastActionTime = Date.now();
-            if(e.key === 's')
+            if(e.key === 's' || e.key === 'ArrowDown')
             {
                 this.velocity.y = 1;
             }
-            if(e.key === 'w')
+            if(e.key === 'w' || e.key === 'ArrowUp')
             {
                 this.velocity.y = -1;
             }
-            if(e.key === 'a')
+            if(e.key === 'a' || e.key === 'ArrowLeft')
             {
                 this.velocity.x = -1;
             }
-            if(e.key === 'd')
+            if(e.key === 'd' || e.key === 'ArrowRight')
             {
                 this.velocity.x = 1;
             }
@@ -29,19 +29,19 @@ export default class scene
         })
         document.body.addEventListener('keyup',(e)=>{
             this.lastActionTime = Date.now();
-            if(e.key === 's')
+            if(e.key === 's' || e.key === 'ArrowDown')
             {
                 this.velocity.y = 0;
             }
-            if(e.key === 'w')
+            if(e.key === 'w' || e.key === 'ArrowUp')
             {
                 this.velocity.y = 0;
             }
-            if(e.key === 'a')
+            if(e.key === 'a' || e.key === 'ArrowLeft')
             {
                 this.velocity.x = 0;
             }
-            if(e.key === 'd')
+            if(e.key === 'd' || e.key === 'ArrowRight')
             {
                 this.velocity.x = 0;
             }
